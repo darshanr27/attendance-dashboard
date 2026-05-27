@@ -25,7 +25,11 @@ const login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.cookie('token', token, { httpOnly: true, sameSite: 'lax' });
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true
+    });
 
     res.status(200).json({ name: user.name, role: user.role });
   } catch (err) {
@@ -34,7 +38,11 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true
+  });
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
