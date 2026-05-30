@@ -6,9 +6,14 @@ const punchIn = async (req, res) => {
 
   try {
     const now = new Date();
-    const date = now.toLocaleDateString('en-CA');
-    const status = now.getHours() < 8 ? 'on_time' : 'late';
 
+    // Convert to IST before checking hours
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const istTime = new Date(now.getTime() + istOffset);
+    
+    const status = istTime.getUTCHours() < 8 ? 'on_time' : 'late';
+    const date = istTime.toISOString().split('T')[0];
+    
     const result = await pool.query(
       `INSERT INTO attendance (user_id, login_time, date, status)
        VALUES ($1, $2, $3, $4) RETURNING *`,
